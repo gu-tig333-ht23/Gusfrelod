@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:test/pages/addtask.dart';
-import 'package:test/util/todo_tile.dart';
+import 'package:template/addtask.dart';
+import 'package:template/todo_tile.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
