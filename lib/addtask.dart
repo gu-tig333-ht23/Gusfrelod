@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'my_button.dart';
 
-class AddTask extends StatelessWidget {
+
+class addTask extends StatelessWidget {
 @override
 Widget build(BuildContext context) {
   return Scaffold(
@@ -23,7 +25,16 @@ class NewTask extends StatefulWidget {
 }
 
 class _NewTaskState extends State<NewTask> {
-  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  final _controller = TextEditingController();
+
+
+void saveNewTask(val) {
+    setState(() {
+      Navigator.of(context).pop(_controller.text);
+    });
+      }
+
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -41,31 +52,25 @@ class _NewTaskState extends State<NewTask> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           TextFormField(
+            controller: _controller,
             decoration: const InputDecoration(
               hintText: 'What are you going to do?',
             ),
-            validator: (String? value) {
-              if (value == null || value.isEmpty) {
-                return 'Please enter a new task';
-              }
-              return null;
-            },
           ),
+          
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: ElevatedButton(
+            child: MyButton(
+              text: "+ ADD",
               onPressed: () {
-                // Validate will return true if the form is valid, or false if
-                // the form is invalid.
-                if (_formKey.currentState!.validate()) {
-                  // Process data.
-                }
-              },
-              child: const Text('+ ADD'),
-            ),
-          ),
-        ],
+                String enteredText = _controller.text;
+                    saveNewTask(enteredText);
+                  },
+                    
+                ),
+                ),],
       ),
     ));
-  }
-}
+                
+                }
+              }
