@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:template/addtask.dart';
-import 'package:template/todo_tile.dart';
+import 'addtask.dart';
+import 'filter.dart';
+import 'todo_tile.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -12,24 +13,39 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  TaskFilter currentFilter = TaskFilter.All; //starts with "All" tasks
+
+
+  // Navigate to next screen and receive new tasks
   void _navigateToNextScreen(BuildContext context) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) => AddTask()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => addTask()))
+        .then((value) {
+      if(value != null && value.isNotEmpty) {
+        toDoList.add((ToDoItem(taskName: value, taskCompleted: false)));
+        setState(() {}); // Update homepage
+    }});
+  }
+  List <ToDoItem>toDoList = [];
 
-    }
+//switch för att filtrera tasks
+List<ToDoItem> filterTasks() {
+  switch (currentFilter) {
+    case TaskFilter.All:
+      return toDoList;
+    case TaskFilter.Done:
+      return toDoList.where((task) => task.taskCompleted).toList();
+    case TaskFilter.Undone:
+      return toDoList.where((task) => !task.taskCompleted).toList();
+  }
+}
 
-//list of to do tasks 
-List toDoList = [
-["Leva livet", false],
-["Krama Rebecka", false],
-["Krama Amanda", false],
-];
 
 //Checkbox 
 void checkBoxChanged(bool? value, int index) {
   setState(() {
-    toDoList[index][1] = !toDoList[index][1];
-  });
-
+    toDoList[index].taskCompleted = value ?? false;
+  });    
 }
 
   @override
@@ -42,7 +58,15 @@ void checkBoxChanged(bool? value, int index) {
         actions: [
           IconButton(onPressed: () {showDialog(
               context: context,
-              builder: (BuildContext context) => _buildPopupDialog(context),);},
+              builder: (context) {
+                return MyFilter(onFilterSelected: (filter) {
+                  setState(() {
+                    currentFilter = filter;
+                  });
+                  Navigator.of(context).pop();
+                });
+              });
+          },
            icon: Icon(Icons.more_vert,))
         ]
 
@@ -57,42 +81,27 @@ void checkBoxChanged(bool? value, int index) {
 
       ),
       
-      body: ListView.builder(
-        itemCount: toDoList.length,
+     body: ListView.builder(
+        itemCount: filterTasks().length,
         itemBuilder: (context, index) {
+          final filteredTasks = filterTasks();
           return ToDoTile(
-            taskName: toDoList[index] [0],
-            taskCompleted: toDoList [index] [1],
-            onChanged: (value) => checkBoxChanged(value, index),
+            toDoItem: filteredTasks[index],
+            onChanged: (bool? newValue) {
+              checkBoxChanged(newValue, toDoList.indexOf(filteredTasks[index]));
+            },
+            onDelete: () {
+              if (index >= 0 && index < filteredTasks.length) {
+                setState(() {
+                  toDoList.removeAt(toDoList.indexOf(filteredTasks[index]));
+                });
+              }
+            }
+           
             );
           },
-         ),
+         ), 
         
       );
-   
   }
-}
-
-//Pop up filter fönster
-Widget _buildPopupDialog(BuildContext context) {
-  return new AlertDialog(
-    title: const Text('Filter:'),
-    content: new Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Text("All"),
-        Text("Done"),
-        Text("Undone")
-      ],
-    ),
-    actions: <Widget>[
-      ElevatedButton(
-        onPressed: () {
-          Navigator.of(context).pop();
-        },
-        child: const Text('Apply'),
-      ),
-    ],
-  );
 }

@@ -1,16 +1,27 @@
 import 'package:flutter/material.dart';
 
+class ToDoItem {
+  String taskName;
+  bool taskCompleted;
+
+  ToDoItem({
+    required this.taskName,
+    required this.taskCompleted,
+  });
+}
+
+
 // ignore: must_be_immutable
 class ToDoTile extends StatelessWidget {
-  final String taskName;
-  final bool taskCompleted;
+  final ToDoItem toDoItem;
   Function(bool?)? onChanged;
+  Function()? onDelete;
 
   ToDoTile({
     super.key, 
-    required this.taskName, 
-    required this.taskCompleted,
+    required this.toDoItem,
     required this.onChanged,
+    required this.onDelete,
   });
 
   @override
@@ -28,22 +39,25 @@ class ToDoTile extends StatelessWidget {
 
             //Checkbox 
             Checkbox(
-              value: taskCompleted, onChanged: onChanged,
+              value: toDoItem.taskCompleted, 
+              onChanged: onChanged,
               ),
 
             //Task name
             Expanded(child: Text(
-              taskName,
+              toDoItem.taskName,
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                decoration: taskCompleted 
+                decoration: toDoItem.taskCompleted 
                 ? TextDecoration.lineThrough
                 : TextDecoration.none,
               ),
             )),
-            //closebutton
-            IconButton(onPressed: () {},
+            //closebutton to delete task
+            IconButton(onPressed: () {
+                onDelete!();
+            },
             icon: Icon(Icons.close))
           ],
         ),
