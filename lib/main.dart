@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:template/home_page.dart';
+import 'package:provider/provider.dart';
+import 'home_page.dart';
+import 'my_state.dart';
 
 void main() {
-  runApp(const MyApp());
+  MyState state = MyState();
+  state.fetchList();
+
+  runApp(ChangeNotifierProvider(
+    create: (context) => state,
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
@@ -12,7 +20,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp( 
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      home: const HomePage(),
       theme: ThemeData(primarySwatch: Colors.pink),
     );
   }

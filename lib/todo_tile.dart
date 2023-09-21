@@ -1,28 +1,16 @@
 import 'package:flutter/material.dart';
-
-class ToDoItem {
-  String taskName;
-  bool taskCompleted;
-
-  ToDoItem({
-    required this.taskName,
-    required this.taskCompleted,
-  });
-}
-
+import 'package:provider/provider.dart';
+import 'my_state.dart';
 
 // ignore: must_be_immutable
 class ToDoTile extends StatelessWidget {
   final ToDoItem toDoItem;
-  Function(bool?)? onChanged;
-  Function()? onDelete;
 
   ToDoTile({
-    super.key, 
+    super.key,
     required this.toDoItem,
-    required this.onChanged,
-    required this.onDelete,
   });
+  
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +26,26 @@ class ToDoTile extends StatelessWidget {
           children: [
 
             //Checkbox 
-            Checkbox(
-              value: toDoItem.taskCompleted, 
-              onChanged: onChanged,
-              ),
+            GestureDetector(
+              onTap: () {
+                context.read<MyState>().checkBoxChanged(toDoItem);
+              },
+              child: !toDoItem.taskCompleted
+              ? const Icon(
+                Icons.check_box_outline_blank,
+                color: Colors.black,
+              )
 
+              : const Icon(
+                Icons.check_box,
+                color: Colors.pink,
+              ),
+            ),
+      
             //Task name
-            Expanded(child: Text(
+            Expanded(
+              child: Padding(padding: const EdgeInsets.all(8.0),
+              child: Text(
               toDoItem.taskName,
               style: TextStyle(
                 fontSize: 20,
@@ -53,10 +54,12 @@ class ToDoTile extends StatelessWidget {
                 ? TextDecoration.lineThrough
                 : TextDecoration.none,
               ),
-            )),
+            )
+            ),
+            ),
             //closebutton to delete task
             IconButton(onPressed: () {
-                onDelete!();
+              context.read<MyState>().deleteTask(toDoItem);
             },
             icon: Icon(Icons.close))
           ],
