@@ -1,44 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'my_button.dart';
+import 'my_state.dart';
 
 
 class addTask extends StatelessWidget {
+final _controller = TextEditingController();
+
 @override
 Widget build(BuildContext context) {
   return Scaffold(
     backgroundColor: const Color.fromARGB(255, 230, 186, 201), 
 
-  appBar: AppBar(
-    title: const Text('ADD NEW TASK', style: TextStyle(fontSize: 30)),
-    backgroundColor: const Color.fromARGB(255, 224, 97, 139)),
-  body: const NewTask(),
-  );
+    appBar: AppBar(
+      title: const Text('ADD NEW TASK', style: TextStyle(fontSize: 30)),
+      backgroundColor: const Color.fromARGB(255, 224, 97, 139)),
 
-}
-}
-
-class NewTask extends StatefulWidget {
-  const NewTask({super.key});
-
-  @override
-  State<NewTask> createState() => _NewTaskState();
-}
-
-class _NewTaskState extends State<NewTask> {
-  final _controller = TextEditingController();
-
-
-void saveNewTask(val) {
-    setState(() {
-      Navigator.of(context).pop(_controller.text);
-    });
-      }
-
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 25.0, right: 25, top: 25, bottom: 500),
+    body: Padding(
+      padding: EdgeInsets.only(left: 25.0, right: 25, top: 25, bottom: 500),
       child: Container(
         padding: EdgeInsets.all(24),
         decoration: BoxDecoration(
@@ -46,7 +25,6 @@ void saveNewTask(val) {
           borderRadius: BorderRadius.circular(12),
         ),
 
-  
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -64,13 +42,16 @@ void saveNewTask(val) {
               text: "+ ADD",
               onPressed: () {
                 String enteredText = _controller.text;
-                    saveNewTask(enteredText);
-                  },
+                Provider.of<MyState>(context, listen: false).saveNewTask(enteredText);
+                _controller.clear();
+                Navigator.of(context).pop();
+                },
                     
                 ),
                 ),],
       ),
-    ));
-                
-                }
-              }
+    ),),
+  );
+
+}
+}
